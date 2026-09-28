@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "laya-bridge"
+version = "0.1.0"
+description = "Local Jev-compatible HTTP bridge over Laya's multilingual System-1 decision engine, for laya-seo's laya-local backend"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "laya[serve]>=0.3.21",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.27.0",
+]
+
+[tool.setuptools]
+packages = ["laya_bridge"]
+
+[project.scripts]
+laya-bridge = "laya_bridge.app:main"

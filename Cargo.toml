@@ -1,0 +1,40 @@
+[package]
+name = "jev-seo"
+version = "0.1.2"
+edition = "2021"
+authors = ["Akash Priyadarshi <272530059+AkashPriyadarshii@users.noreply.github.com>"]
+license = "MIT"
+description = "Free Rust SEO and GEO toolkit powered by TypeSafe Jev: 58-rule audits, site crawls, AI citation checks, rank drift, CI gates, 15-tool MCP. Zero cost."
+repository = "https://github.com/AkashPriyadarshii/jev-seo"
+homepage = "https://github.com/AkashPriyadarshii/jev-seo"
+readme = "README.md"
+keywords = ["seo", "geo", "typesafe-ai", "mcp", "serp"]
+categories = ["command-line-utilities", "development-tools"]
+# The published crate ships the tool, not the workshop: no fixtures,
+# research notes, agent tooling, or binary assets.
+include = [
+    "src/**/*.rs",
+    "/Cargo.toml",
+    "/Cargo.lock",
+    "/README.md",
+    "/LICENSE",
+    "/SKILL.md",
+    "/CHANGELOG.md",
+    "examples/*.json",
+    "examples/*.md",
+]
+
+[dependencies]
+clap = { version = "4.5", features = ["derive", "env"] }
+ureq = { version = "2.10", features = ["json"] }
+url = "2.5"
+gray_matter = "0.2"
+regex = "1.11"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = { version = "0.32", features = ["bundled"] }
+colored = "2.1"
+anyhow = "1.0"
+
+[dev-dependencies]
+tempfile = "3.10"

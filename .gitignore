@@ -1,0 +1,20 @@
+# Rust
+/target/
+Cargo.lock.bak
+
+# Python (laya-bridge)
+laya-bridge/.venv/
+laya-bridge/laya_bridge.egg-info/
+laya-bridge/.pytest_cache/
+**/__pycache__/
+*.pyc
+
+# jev-seo run artifacts (generated per-audit, never source)
+run.json
+ledger.json
+narrative.json
+*.jev-seo.db
+.jev-seo.db
+
+# Local agent tooling, not project source
+.claude/

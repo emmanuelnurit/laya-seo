@@ -1,0 +1,25 @@
+laya-seo
+Copyright (c) 2026 MyOrg
+
+This product is a fork of jev-seo (https://github.com/AkashPriyadarshii/jev-seo),
+Copyright (c) 2026 Akash Priyadarshi, licensed under the MIT License.
+See LICENSE for the full MIT license text.
+
+This product's `laya-bridge` component depends on and wraps Laya
+(https://github.com/NandhaKishorM/laya, distributed on PyPI as `laya` and on
+Hugging Face as convaiinnovations/laya), Copyright (c) Convai Innovations,
+licensed under the Apache License, Version 2.0. A copy of the Apache License,
+Version 2.0 is available at http://www.apache.org/licenses/LICENSE-2.0 and is
+bundled with the `laya` distribution consumed by `laya-bridge`.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.

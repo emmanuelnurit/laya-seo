@@ -22,6 +22,25 @@ pub struct Thresholds {
 
 /// Skill rule-of-thumb: Choice/Score confidence >= 0.80 is safe to act on
 /// autonomous (non-destructive) paths. Noul uses its own probability bands.
+///
+/// Tested against real MyOrg content, not just the skill default: a second
+/// calibration pilot (MYO-536, `calibration/scale-2026-09-28/`) ran
+/// `decide`/`link` on 89 + 9 real `thelia3` engineering docs (hand-labeled
+/// ground truth). `calibrate`'s raw F1-optimal suggestion on the `decide`
+/// set was ACT=0.00 -- rejected: that set is 86/89 `correct=true` almost
+/// independent of confidence (internal docs are trivially keep-worthy), so
+/// the "optimal" threshold is an artifact of a degenerate label
+/// distribution, not a real signal -- following it would mean treating
+/// 5-15%-confidence decisions as fact, including 3 confirmed-wrong
+/// merge/delete calls in that same set. The `link` set showed more
+/// separation (0.49 vs 0.80) but n=9 is too small to move a threshold
+/// shared with `audit`/`geo`/`crawl`. Left at 0.80/0.45: not invalidated by
+/// that pilot, not positively confirmed by it either -- both pilots'
+/// corpora are internal docs without real page title/description, not the
+/// indexed product/CMS pages this gates in production. Genuine "few hundred
+/// real decisions" calibration stays blocked on the same access gap as
+/// `INJECTION_BLOCK` below (live `thelia3`/`flexy` read access or a real
+/// GSC export) -- see that pilot's README for the exact blocker.
 pub const ACT: f64 = 0.80;
 /// Below this: do not print Jev numbers at all.
 pub const FLAG: f64 = 0.45;

@@ -1,0 +1,10 @@
+id,confidence,correct
+demo-2026-09-22--2-relancer-l-environnement-de-z-ro.md->disaster-recovery--preamble,0.8845,true
+demo-2026-09-22--preamble.md->readme--installation,0.4863,true
+demo-2026-09-22-script--preamble.md->demo-2026-09-22--preamble,0.6460,true
+disaster-recovery--2-artefacts-absents-du-bundle-disposition-par-cat-gorie-myo-.md->disaster-recovery--preamble,0.8356,true
+disaster-recovery--6-copie-hors-machine-du-d-p-t-site-myo-428-433.md->disaster-recovery--preamble,0.9188,true
+disaster-recovery--preamble.md->disaster-recovery--2-artefacts-absents-du-bundle-disposition-par-cat-gorie-myo-,0.5402,true
+readme--installation.md->disaster-recovery--6-copie-hors-machine-du-d-p-t-site-myo-428-433,0.5711,false
+readme--preamble.md->disaster-recovery--2-artefacts-absents-du-bundle-disposition-par-cat-gorie-myo-,0.5126,false
+readme--production-deployment-prerequisites.md->capacites-api--preamble,0.5139,true

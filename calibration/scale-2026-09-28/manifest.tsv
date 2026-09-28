@@ -1,0 +1,89 @@
+capacites-api--preamble.md	docs/commerceagents/capacites-api.md	preamble	47
+capacites-api--r-ponses-rapides-aux-4-questions-du-board.md	docs/commerceagents/capacites-api.md	Réponses rapides aux 4 questions du board	224
+capacites-api--1-inventaire-de-l-api-c-ur-thelia-3-api-platform.md	docs/commerceagents/capacites-api.md	1. Inventaire de l'API cœur Thelia 3 (API Platform)	1437
+capacites-api--2-authentification-et-permissions.md	docs/commerceagents/capacites-api.md	2. Authentification et permissions	538
+capacites-api--3-ce-que-commerceagents-sait-d-j-faire.md	docs/commerceagents/capacites-api.md	3. Ce que CommerceAgents sait déjà faire	696
+capacites-api--4-tableau-de-couverture.md	docs/commerceagents/capacites-api.md	4. Tableau de couverture	488
+capacites-api--5-api-rest-vs-serveur-mcp-recommandation.md	docs/commerceagents/capacites-api.md	5. API REST vs serveur MCP — recommandation	584
+capacites-api--6-roadmap-propos-e.md	docs/commerceagents/capacites-api.md	6. Roadmap proposée	457
+disaster-recovery--preamble.md	docs/disaster-recovery.md	preamble	60
+disaster-recovery--artefacts-n-cessaires.md	docs/disaster-recovery.md	Artefacts nécessaires	107
+disaster-recovery--1-cloner-le-code-depuis-les-bundles.md	docs/disaster-recovery.md	1. Cloner le code depuis les bundles	128
+disaster-recovery--2-artefacts-absents-du-bundle-disposition-par-cat-gorie-myo-.md	docs/disaster-recovery.md	2. Artefacts absents du bundle — disposition par catégorie (MYO-401)	965
+disaster-recovery--3-restaurer-la-donn-e.md	docs/disaster-recovery.md	3. Restaurer la donnée	373
+disaster-recovery--4-d-marrer-et-v-rifier.md	docs/disaster-recovery.md	4. Démarrer et vérifier	572
+disaster-recovery--6-copie-hors-machine-du-d-p-t-site-myo-428-433.md	docs/disaster-recovery.md	6. Copie hors-machine du dépôt site (MYO-428/433)	809
+disaster-recovery--contr-le-de-contenu-du-filet-au-lieu-de-lire-ce-document-la-.md	docs/disaster-recovery.md	Contrôle de contenu du filet (au lieu de lire ce document à la main)	232
+demo-2026-09-22-script--preamble.md	docs/demo-2026-09-22-script.md	preamble	139
+demo-2026-09-22-script--correction-de-r-f-rence-num-rotation-des-tickets.md	docs/demo-2026-09-22-script.md	⚠️ Correction de référence — numérotation des tickets	232
+demo-2026-09-22-script--qui-manipule.md	docs/demo-2026-09-22-script.md	Qui manipule	113
+demo-2026-09-22-script--minutage-global-22-minutes-5-actes.md	docs/demo-2026-09-22-script.md	Minutage global — 22 minutes, 5 actes	135
+demo-2026-09-22-script--acte-0-le-d-cor-2-min.md	docs/demo-2026-09-22-script.md	Acte 0 — Le décor (2 min)	121
+demo-2026-09-22-script--acte-1-c-t-client-l-offre-opt-in-4-min.md	docs/demo-2026-09-22-script.md	Acte 1 — Côté client : l'offre opt-in (4 min)	342
+demo-2026-09-22-script--acte-2-le-brief-3-min.md	docs/demo-2026-09-22-script.md	Acte 2 — Le Brief (3 min)	183
+demo-2026-09-22-script--acte-3-l-avis-2-toiles-5-min.md	docs/demo-2026-09-22-script.md	Acte 3 — L'avis 2 étoiles (5 min)	184
+demo-2026-09-22-script--acte-4-la-rupture-sur-un-produit-en-promo-5-min.md	docs/demo-2026-09-22-script.md	Acte 4 — La rupture sur un produit en promo (5 min)	166
+demo-2026-09-22-script--acte-5-le-copilote-3-min-saute-en-premier-si-le-temps-manque.md	docs/demo-2026-09-22-script.md	Acte 5 — Le copilote (3 min, saute en premier si le temps manque)	147
+demo-2026-09-22-script--cart-volontairement-ne-se-montre-pas-se-raconte-en-cl-ture.md	docs/demo-2026-09-22-script.md	Écarté volontairement — ne se montre pas, se raconte en clôture	71
+demo-2026-09-22-script--5-phrases-tenir-pr-tes.md	docs/demo-2026-09-22-script.md	5. Phrases à tenir prêtes	153
+demo-2026-09-22-script--6-plans-de-repli-crits-et-tester-la-r-p-tition.md	docs/demo-2026-09-22-script.md	6. Plans de repli — écrits et à tester à la répétition	408
+demo-2026-09-22-script--7-r-p-tition-compl-te-protocole-et-tat-d-avancement.md	docs/demo-2026-09-22-script.md	7. Répétition complète — protocole et état d'avancement	284
+demo-2026-09-22-script--8-r-sultat-de-la-r-p-tition-myo-487-et-go-no-go-final.md	docs/demo-2026-09-22-script.md	8. Résultat de la répétition (MYO-487) et go/no-go final	381
+myo-479-repli-dock-panier--0-recommandation-en-une-phrase.md	docs/design/myo-479-repli-dock-panier.md	0. Recommandation en une phrase	93
+myo-479-repli-dock-panier--1-constat-actuel.md	docs/design/myo-479-repli-dock-panier.md	1. Constat actuel	202
+myo-479-repli-dock-panier--2-principe-retenu-et-alternatives-cart-es.md	docs/design/myo-479-repli-dock-panier.md	2. Principe retenu (et alternatives écartées)	318
+myo-479-repli-dock-panier--3-tats-sp-cifi-s-ac1.md	docs/design/myo-479-repli-dock-panier.md	3. États spécifiés (AC1)	714
+myo-479-repli-dock-panier--4-micro-interaction-entr-e-sortie-ac2.md	docs/design/myo-479-repli-dock-panier.md	4. Micro-interaction : entrée / sortie (AC2)	155
+myo-479-repli-dock-panier--5-non-r-gression-ac3.md	docs/design/myo-479-repli-dock-panier.md	5. Non-régression (AC3)	309
+myo-479-repli-dock-panier--6-accessibilit-ac4.md	docs/design/myo-479-repli-dock-panier.md	6. Accessibilité (AC4)	231
+myo-479-repli-dock-panier--7-wording-fr-en-et-cl-s-i18n-ac5.md	docs/design/myo-479-repli-dock-panier.md	7. Wording FR/EN et clés i18n (AC5)	181
+myo-479-repli-dock-panier--8-volet-e-mail-opt-in-newsletter-ac6.md	docs/design/myo-479-repli-dock-panier.md	8. Volet e-mail / opt-in newsletter (AC6)	331
+myo-479-repli-dock-panier--9-notes-de-faisabilit-non-normatif-le-choix-technique-reste-.md	docs/design/myo-479-repli-dock-panier.md	9. Notes de faisabilité (non normatif — le choix technique reste à la Tech)	187
+myo-479-repli-dock-panier--10-sacrifices-assum-s-r-capitulatif.md	docs/design/myo-479-repli-dock-panier.md	10. Sacrifices assumés (récapitulatif)	112
+myo-479-repli-dock-panier--11-rep-res-pour-l-impl-mentation-r-f-rence-pas-une-prescript.md	docs/design/myo-479-repli-dock-panier.md	11. Repères pour l'implémentation (référence, pas une prescription)	103
+myo-479-repli-dock-panier--12-acceptance-criteria-tat-de-couverture.md	docs/design/myo-479-repli-dock-panier.md	12. Acceptance criteria — état de couverture	79
+demo-2026-09-22--preamble.md	docs/demo-2026-09-22.md	preamble	59
+demo-2026-09-22--1-vue-d-ensemble.md	docs/demo-2026-09-22.md	1. Vue d'ensemble	111
+demo-2026-09-22--2-relancer-l-environnement-de-z-ro.md	docs/demo-2026-09-22.md	2. Relancer l'environnement de zéro	443
+demo-2026-09-22--3-la-commande-commerce-agents-demo-seed.md	docs/demo-2026-09-22.md	3. La commande `commerce-agents:demo-seed`	402
+demo-2026-09-22--4-rep-res-pour-la-d-mo-donn-es-r-elles-de-cet-environnement.md	docs/demo-2026-09-22.md	4. Repères pour la démo (données réelles de cet environnement)	262
+demo-2026-09-22--5-gotchas-connus.md	docs/demo-2026-09-22.md	5. Gotchas connus	91
+checkout-steps--preamble.md	docs/checkout-steps.md	preamble	251
+checkout-steps--data-model.md	docs/checkout-steps.md	Data model	249
+checkout-steps--progression.md	docs/checkout-steps.md	Progression	474
+checkout-steps--where-things-live.md	docs/checkout-steps.md	Where things live	71
+reserved-sales--preamble.md	docs/reserved-sales.md	preamble	113
+reserved-sales--data-model.md	docs/reserved-sales.md	Data model	217
+reserved-sales--where-the-reserved-price-lives.md	docs/reserved-sales.md	Where the reserved price lives	368
+reserved-sales--countdown.md	docs/reserved-sales.md	Countdown	128
+reserved-sales--surfaces.md	docs/reserved-sales.md	Surfaces	167
+cra-incident-response--preamble.md	docs/security/cra-incident-response.md	preamble	40
+cra-incident-response--role-and-obligations.md	docs/security/cra-incident-response.md	Role and obligations	83
+cra-incident-response--what-triggers-a-notification.md	docs/security/cra-incident-response.md	What triggers a notification	96
+cra-incident-response--who-notifies.md	docs/security/cra-incident-response.md	Who notifies	42
+cra-incident-response--where-to-notify.md	docs/security/cra-incident-response.md	Where to notify	56
+cra-incident-response--timeline-article-14.md	docs/security/cra-incident-response.md	Timeline (Article 14)	138
+cra-incident-response--checklist.md	docs/security/cra-incident-response.md	Checklist	104
+readme--preamble.md	local/modules/CommerceAgents/README.md	preamble	182
+readme--requirements.md	local/modules/CommerceAgents/README.md	Requirements	68
+readme--installation.md	local/modules/CommerceAgents/README.md	Installation	418
+readme--production-deployment-prerequisites.md	local/modules/CommerceAgents/README.md	Production deployment prerequisites	1160
+readme--configuration.md	local/modules/CommerceAgents/README.md	Configuration	300
+readme--shopping-assistant-front-office.md	local/modules/CommerceAgents/README.md	Shopping assistant (front office)	389
+readme--merchant-assistant-back-office.md	local/modules/CommerceAgents/README.md	Merchant assistant (back office)	308
+readme--configurable-agents.md	local/modules/CommerceAgents/README.md	Configurable agents	773
+readme--channels.md	local/modules/CommerceAgents/README.md	Channels	294
+readme--mcp-server.md	local/modules/CommerceAgents/README.md	MCP server	148
+readme--architecture.md	local/modules/CommerceAgents/README.md	Architecture	1223
+readme--development.md	local/modules/CommerceAgents/README.md	Development	136
+readme--known-limitations.md	local/modules/CommerceAgents/README.md	Known limitations	153
+changelog--preamble.md	local/modules/CommerceAgents/CHANGELOG.md	preamble	49
+changelog--v1-assistants-ia-pour-la-boutique-myo-226-myo-257.md	local/modules/CommerceAgents/CHANGELOG.md	V1 — assistants IA pour la boutique (MYO-226 → MYO-257)	1132
+changelog--post-v1-myo-297-myo-348.md	local/modules/CommerceAgents/CHANGELOG.md	Post-V1 (MYO-297 → MYO-348)	771
+changelog--post-v1-suite-myo-372-myo-407.md	local/modules/CommerceAgents/CHANGELOG.md	Post-V1, suite (MYO-372 → MYO-407)	759
+changelog--post-v1-suite-myo-416-myo-426.md	local/modules/CommerceAgents/CHANGELOG.md	Post-V1, suite (MYO-416 → MYO-426)	808
+changelog--exploitation-sauvegarde-hors-machine-du-d-p-t-module-par-dep.md	local/modules/CommerceAgents/CHANGELOG.md	Exploitation — sauvegarde hors-machine du dépôt module par deploy key SSH (MYO-443)	232
+changelog--0-4-3-myo-464-myo-465.md	local/modules/CommerceAgents/CHANGELOG.md	0.4.3 (MYO-464, MYO-465)	430
+changelog--0-4-2-myo-452-myo-453.md	local/modules/CommerceAgents/CHANGELOG.md	0.4.2 (MYO-452, MYO-453)	332
+changelog--0-4-5-myo-484.md	local/modules/CommerceAgents/CHANGELOG.md	0.4.5 (MYO-484)	407
+changelog--0-4-6-myo-479-480-493.md	local/modules/CommerceAgents/CHANGELOG.md	0.4.6 (MYO-479/480/493)	447

@@ -37,10 +37,20 @@ pub struct Thresholds {
 /// shared with `audit`/`geo`/`crawl`. Left at 0.80/0.45: not invalidated by
 /// that pilot, not positively confirmed by it either -- both pilots'
 /// corpora are internal docs without real page title/description, not the
-/// indexed product/CMS pages this gates in production. Genuine "few hundred
-/// real decisions" calibration stays blocked on the same access gap as
-/// `INJECTION_BLOCK` below (live `thelia3`/`flexy` read access or a real
-/// GSC export) -- see that pilot's README for the exact blocker.
+/// indexed product/CMS pages this gates in production.
+///
+/// A third pilot (MYO-537 export, `calibration/real-corpus-2026-09-28/`) ran
+/// on the entire real thelia3 catalog -- 41 pages, real titles/meta, not a
+/// proxy -- and confirms the same conclusion rather than overturning it:
+/// `decide`'s raw F1-optimal suggestion is again ACT=0.00, again an artifact
+/// of a lopsided label set (33/41 trivially keep-worthy), and `link`'s false
+/// positives (a target-page hub bias) span almost the full confidence range
+/// (0.49-1.00) so no threshold separates them cleanly. Combined labeled
+/// total across all three pilots: 174 decisions -- below the "few hundred"
+/// the calibration mandate asks for, but that ceiling is now a fact about
+/// this environment (the published thelia3 catalog has exactly 41 pages,
+/// confirmed by direct query, not a sampling choice) rather than an
+/// unexplored gap. See that pilot's README for the full breakdown.
 pub const ACT: f64 = 0.80;
 /// Below this: do not print Jev numbers at all.
 pub const FLAG: f64 = 0.45;

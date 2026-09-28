@@ -1,0 +1,57 @@
+[
+  {
+    "confidence": 0.9637,
+    "source": "calibration/real-corpus-2026-09-28/content/cms--garantie.md",
+    "target": "cms--livraison"
+  },
+  {
+    "confidence": 0.9244,
+    "source": "calibration/real-corpus-2026-09-28/content/cms--mentions-legales.md",
+    "target": "cms--livraison"
+  },
+  {
+    "confidence": 0.9906,
+    "source": "calibration/real-corpus-2026-09-28/content/cms--nouveaute-scarlett.md",
+    "target": "cms--livraison"
+  },
+  {
+    "confidence": 0.9994,
+    "source": "calibration/real-corpus-2026-09-28/content/cms--nouveaux-horaires-d-ouverture.md",
+    "target": "cms--livraison"
+  },
+  {
+    "confidence": 0.5155,
+    "source": "calibration/real-corpus-2026-09-28/content/cms--obtenez-votre-bon-de-reduction.md",
+    "target": "cms--livraison"
+  },
+  {
+    "confidence": 0.4869,
+    "source": "calibration/real-corpus-2026-09-28/content/product--canape-vintage-sigmund.md",
+    "target": "cms--nouveaute-scarlett"
+  },
+  {
+    "confidence": 1.0,
+    "source": "calibration/real-corpus-2026-09-28/content/product--chaise-campagne-bois-marie-claire.md",
+    "target": "cms--nouveaute-scarlett"
+  },
+  {
+    "confidence": 0.9726,
+    "source": "calibration/real-corpus-2026-09-28/content/product--chaise-design-bois-blanc-stuart.md",
+    "target": "cms--nouveaute-scarlett"
+  },
+  {
+    "confidence": 0.7403,
+    "source": "calibration/real-corpus-2026-09-28/content/product--fauteuil-cuir-jaune-leela.md",
+    "target": "cms--nouveaute-scarlett"
+  },
+  {
+    "confidence": 0.9976,
+    "source": "calibration/real-corpus-2026-09-28/content/product--fauteuil-retro-owen.md",
+    "target": "cms--nouveaute-scarlett"
+  },
+  {
+    "confidence": 0.927,
+    "source": "calibration/real-corpus-2026-09-28/content/product--tabouret-bar-glossy-ron.md",
+    "target": "cms--nouveaute-scarlett"
+  }
+]

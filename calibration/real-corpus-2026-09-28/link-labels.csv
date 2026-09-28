@@ -1,0 +1,12 @@
+id,confidence,correct
+product--chaise-campagne-bois-marie-claire.md->cms--nouveaute-scarlett,1.0,false
+cms--nouveaux-horaires-d-ouverture.md->cms--livraison,0.9994,true
+product--fauteuil-retro-owen.md->cms--nouveaute-scarlett,0.9976,false
+cms--nouveaute-scarlett.md->cms--livraison,0.9906,true
+product--chaise-design-bois-blanc-stuart.md->cms--nouveaute-scarlett,0.9726,false
+cms--garantie.md->cms--livraison,0.9637,true
+product--tabouret-bar-glossy-ron.md->cms--nouveaute-scarlett,0.927,false
+cms--mentions-legales.md->cms--livraison,0.9244,true
+product--fauteuil-cuir-jaune-leela.md->cms--nouveaute-scarlett,0.7403,false
+cms--obtenez-votre-bon-de-reduction.md->cms--livraison,0.5155,true
+product--canape-vintage-sigmund.md->cms--nouveaute-scarlett,0.4869,false

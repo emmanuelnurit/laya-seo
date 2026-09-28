@@ -1,0 +1,289 @@
+[
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2854,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--a-propos.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2524,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--conditions-generales-de-vente.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.4865,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--entretien-du-bois.md",
+    "verdict": "flag"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.5666,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--entretien-du-cuir.md",
+    "verdict": "flag"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1856,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--garantie.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--livraison.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--mentions-legales.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--nettoyage-du-tissu.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1104,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--nouveaute-scarlett.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--nouveaux-horaires-d-ouverture.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/cms--obtenez-votre-bon-de-reduction.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.178,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--banquette-scarlett-intemporelle.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1745,
+    "decision": "update",
+    "file": "calibration/real-corpus-2026-09-28/content/product--canape-capitonne-chrome-kyle.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1461,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--canape-flynn-retro-laine.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--canape-lounge-nigel.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1478,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--canape-velours-heathcliff.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0561,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--canape-vintage-sigmund.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.128,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-campagne-bois-marie-claire.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1029,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-confort-bois-tissu-kenny.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2441,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-cuisine-coloree-courtney.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0658,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-design-bois-blanc-stuart.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1093,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-empilable-plastique-tina.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-horatio-dossier-haut.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.3051,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-legere-monobloc-haley.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.213,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-lexie-dossier-haut-beige.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2812,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-pamela-laine-brun-clair.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2282,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-repas-mate-barbara.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1329,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-sally-cuir-quatre-couleurs.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1724,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--chaise-violet-cuir-noyer.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.212,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-cuir-jaune-leela.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0974,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-cuir-wilson.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.0871,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-emily-bois-sculpte-rouge.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1702,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-oliver-coque-lecture.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.222,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-pivotant-edgar-inox.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2382,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-pivotant-zoe.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.2028,
+    "decision": "merge",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-retro-owen.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1121,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-stacy-style-regence.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1591,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--fauteuil-victoria-esprit-regence.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1223,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--tabouret-bar-glossy-ron.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.1779,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--tabouret-bar-reglable-nibbler.md",
+    "verdict": "drop"
+  },
+  {
+    "cannibalization_with": null,
+    "confidence": 0.223,
+    "decision": "keep",
+    "file": "calibration/real-corpus-2026-09-28/content/product--tabouret-empilable-travis.md",
+    "verdict": "drop"
+  }
+]

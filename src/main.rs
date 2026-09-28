@@ -26,6 +26,8 @@ mod schema;
 mod serp;
 mod sitemap;
 mod vitals;
+mod workflow;
+mod calibrate;
 
 #[cfg(test)]
 mod tests;
@@ -309,6 +311,51 @@ enum Commands {
     },
     /// Start native stdio JSON-RPC 2.0 Agent MCP Server
     Mcp,
+    /// Classify search intent for GSC queries via Jev Choice (auspia.ai use case 1)
+    Intent {
+        /// CSV export from Search Console ("Queries.csv"): needs a `query` column;
+        /// `Clicks`/`Impressions`/`CTR`/`Position` used when present
+        #[arg(long, value_name = "PATH")]
+        csv: Option<String>,
+        /// Verified GSC site URL (live top-queries fetch instead of --csv)
+        #[arg(long)]
+        site: Option<String>,
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+        #[arg(long)]
+        json: bool,
+        /// Hard Jev spend cap in USD for this run
+        #[arg(long, default_value_t = 0.25, value_name = "USD")]
+        jev_budget: f64,
+    },
+    /// Keep / update / merge / delete decision per page (auspia.ai use case 2)
+    Decide {
+        /// File path or directory path to inspect
+        path: String,
+        /// Max pages to judge
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+        #[arg(long)]
+        json: bool,
+        /// Hard Jev spend cap in USD for this run
+        #[arg(long, default_value_t = 0.25, value_name = "USD")]
+        jev_budget: f64,
+    },
+    /// Calibrate a confidence threshold against labeled decisions (MYO-536)
+    Calibrate {
+        /// CSV of labeled decisions: id,confidence,correct
+        csv: String,
+        /// Threshold to compare against (default: policy::ACT, 0.80)
+        #[arg(long)]
+        default_threshold: Option<f64>,
+        #[arg(long)]
+        json: bool,
+    },
+    /// Review the staged decision ledger (~/.jev-seo/decisions.jsonl) grouped by verdict
+    Review {
+        #[arg(long)]
+        json: bool,
+    },
 }
 
 /// Push CLI `--jev-budget` into the process-wide spend cap (USD).
@@ -316,7 +363,9 @@ fn apply_jev_budget_from(cli: &Cli) {
     let usd = match &cli.command {
         Commands::Audit { jev_budget, .. }
         | Commands::Geo { jev_budget, .. }
-        | Commands::Crawl { jev_budget, .. } => *jev_budget,
+        | Commands::Crawl { jev_budget, .. }
+        | Commands::Intent { jev_budget, .. }
+        | Commands::Decide { jev_budget, .. } => *jev_budget,
         _ => manifest::DEFAULT_JEV_BUDGET_USD,
     };
     manifest::set_jev_budget_usd(usd);
@@ -577,6 +626,17 @@ fn main() -> Result<()> {
                         let target = ans.and_then(|a| a.get("choice")).and_then(|c| c.as_str()).unwrap_or("no_link");
                         let conf = ans.and_then(|a| a.get("confidence")).and_then(|c| c.as_f64()).unwrap_or(0.5);
                         let v = policy::gate("link", conf);
+                        // Execute: stage every decision, Drop included -- the
+                        // review report is exactly where low-confidence rows
+                        // must surface, not only the ones that print here.
+                        let _ = workflow::stage(&workflow::make_decision(
+                            "link",
+                            &src.file_path,
+                            target,
+                            conf,
+                            v,
+                            ans.cloned().unwrap_or(serde_json::Value::Null),
+                        ));
                         if v == policy::Verdict::Drop {
                             continue;
                         }
@@ -1065,6 +1125,14 @@ fn main() -> Result<()> {
                         // Geo display gates on geo confidence only: a navigational
                         // homepage must not veto its own citation score.
                         let v = policy::gate("geo", eval.geo_confidence);
+                        let _ = workflow::stage(&workflow::make_decision(
+                            "geo",
+                            &target,
+                            &eval.geo_score.to_string(),
+                            eval.geo_confidence,
+                            v,
+                            serde_json::to_value(&eval).unwrap_or(serde_json::Value::Null),
+                        ));
                         if v == policy::Verdict::Drop {
                             eprintln!("{}", format!("Jev unsure (confidence {:.2}), no score.", eval.geo_confidence).yellow());
                             print_jev_spend_line();
@@ -1912,6 +1980,174 @@ fn main() -> Result<()> {
                     eprintln!("{}", format!("Error: unknown gsc action '{}', use auth, sites, gap, or query.", other).red());
                     std::process::exit(2);
                 }
+            }
+        }
+        Commands::Intent { csv, site, limit, json, jev_budget: _ } => {
+            // Générer & raisonner: gather queries from whichever source was
+            // given, live GSC (OAuth already configured) or a UI CSV export
+            // (no OAuth needed -- the common path when this agent has no
+            // Search Console credentials wired up yet).
+            let rows: Vec<gsc::GscRow> = match (csv, site) {
+                (Some(path), _) => {
+                    let raw = crate::paths::read_user_file(&path, &["csv"])?;
+                    gsc::parse_csv_export(&raw)?
+                }
+                (None, Some(site)) => gsc::top_queries(&site, limit)?,
+                (None, None) => {
+                    eprintln!("{}", "Error: intent needs --csv <Search Console export> or --site <verified URL>.".red());
+                    std::process::exit(2);
+                }
+            };
+            let client = match engine::JevClient::new() {
+                Some(c) => c,
+                None => {
+                    eprintln!("{}", "Note: intent classification needs Jev (set LAYA_LOCAL_URL or TYPESAFE_API_KEY).".yellow());
+                    return Ok(());
+                }
+            };
+            let mut out: Vec<serde_json::Value> = Vec::new();
+            if !json {
+                println!("{}", "Search Intent Classification (Jev Choice):".cyan().bold());
+            }
+            for row in rows.iter().take(limit.max(1)) {
+                match client.classify_intent(&row.query) {
+                    Ok((intent, confidence, raw)) => {
+                        // Décider: calibrated gate turns confidence into a verdict.
+                        let v = policy::gate("query", confidence);
+                        // Exécuter: stage for review regardless of verdict.
+                        let decision = workflow::make_decision("intent-classify", &row.query, &intent, confidence, v, raw);
+                        let _ = workflow::stage(&decision);
+                        if json {
+                            out.push(json!({
+                                "query": row.query, "intent": intent, "confidence": confidence,
+                                "verdict": decision.verdict, "impressions": row.impressions, "position": row.position
+                            }));
+                        } else {
+                            println!(
+                                "  {:<40} {}{}",
+                                row.query.chars().take(40).collect::<String>(),
+                                intent.yellow(),
+                                policy::marker(v)
+                            );
+                        }
+                    }
+                    Err(e) => eprintln!("{}", format!("Warning: intent classify failed for \"{}\" ({e:#})", row.query).yellow()),
+                }
+            }
+            if json {
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            } else {
+                println!("\n{}", "Revoir: jev-seo review — staged decisions grouped by confidence.".dimmed());
+            }
+            print_jev_spend_line();
+        }
+        Commands::Decide { path, limit, json, jev_budget: _ } => {
+            // Générer & raisonner: reuse the audit engine for page evidence
+            // (checks, word counts) and the existing cannibalization-pair
+            // detector for the merge signal -- both already deterministic,
+            // Jev only synthesizes them into one keep/update/merge/delete call.
+            let dir_report = audit::with_findings(audit::audit_path(&path)?);
+            let pairs = audit::cannibalization_pairs(&dir_report);
+            let merge_target_for = |file_path: &str| -> Option<String> {
+                pairs.iter().find(|p| p.a == file_path || p.b == file_path).map(|p| {
+                    let other = if p.a == file_path { &p.b } else { &p.a };
+                    other.clone()
+                })
+            };
+            let client = match engine::JevClient::new() {
+                Some(c) => c,
+                None => {
+                    eprintln!("{}", "Note: content decisions need Jev (set LAYA_LOCAL_URL or TYPESAFE_API_KEY).".yellow());
+                    return Ok(());
+                }
+            };
+            let mut out: Vec<serde_json::Value> = Vec::new();
+            if !json {
+                println!("{}", "Content Decisions — keep / update / merge / delete (Jev Choice):".cyan().bold());
+            }
+            for report in dir_report.reports.iter().take(limit.max(1)) {
+                let content = excerpt_local(&report.file_path);
+                if content.trim().is_empty() {
+                    continue;
+                }
+                let mut state = engine::page_state("", report.title.clone(), report.description.clone(), content, report.word_count, None);
+                if let Some(obj) = state.as_object_mut() {
+                    obj.insert("checks".into(), serde_json::to_value(&report.checks).unwrap_or_default());
+                }
+                let cannibal = merge_target_for(&report.file_path);
+                match client.judge_content_decision(state, cannibal.as_deref()) {
+                    Ok((decision, confidence, raw)) => {
+                        // Décider
+                        let v = policy::gate("audit", confidence);
+                        // Exécuter: stage, never touch the file itself.
+                        let staged = workflow::make_decision("content-decide", &report.file_path, &decision, confidence, v, raw);
+                        let _ = workflow::stage(&staged);
+                        if json {
+                            out.push(json!({
+                                "file": report.file_path, "decision": decision, "confidence": confidence,
+                                "verdict": staged.verdict, "cannibalization_with": cannibal
+                            }));
+                        } else {
+                            println!(
+                                "  {:<50} {}{}{}",
+                                report.file_path.chars().take(50).collect::<String>(),
+                                decision.yellow(),
+                                policy::marker(v),
+                                cannibal.as_deref().map(|c| format!(" (vs {})", c)).unwrap_or_default().dimmed()
+                            );
+                        }
+                    }
+                    Err(e) => eprintln!("{}", format!("Warning: content decision failed for {} ({e:#})", report.file_path).yellow()),
+                }
+            }
+            if json {
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            } else {
+                println!("\n{}", "Revoir: jev-seo review — staged decisions grouped by confidence.".dimmed());
+            }
+            print_jev_spend_line();
+        }
+        Commands::Calibrate { csv, default_threshold, json } => {
+            let raw = crate::paths::read_user_file(&csv, &["csv"])?;
+            let examples = calibrate::parse_csv(&raw)?;
+            let default_threshold = default_threshold.unwrap_or(policy::ACT);
+            let result = calibrate::calibrate(&examples, default_threshold)?;
+            if json {
+                println!("{}", serde_json::to_string_pretty(&result)?);
+            } else {
+                println!("\n{}", "Confidence-threshold calibration (MYO-536):".cyan().bold());
+                println!("  Labeled examples:   {} ({} correct)", result.n, result.positives);
+                println!(
+                    "  Default {:.2}:       precision {:.2}  recall {:.2}  F1 {:.2}",
+                    result.default_threshold, result.precision_at_default, result.recall_at_default, result.f1_at_default
+                );
+                println!(
+                    "  Recommended {:.2}:   precision {:.2}  recall {:.2}  F1 {:.2}",
+                    result.recommended_threshold, result.precision_at_threshold, result.recall_at_threshold, result.f1_at_threshold
+                );
+                if result.recommended_threshold != result.default_threshold {
+                    println!(
+                        "\n  {} update policy::ACT (or the relevant per-command threshold) from {:.2} to {:.2}.",
+                        "Action:".bold(), result.default_threshold, result.recommended_threshold
+                    );
+                } else {
+                    println!("\n  Default threshold already matches the F1-optimal point on this data.");
+                }
+                if !result.misclassified_at_threshold.is_empty() {
+                    println!(
+                        "  Misclassified at recommended threshold ({}): {}",
+                        result.misclassified_at_threshold.len(),
+                        result.misclassified_at_threshold.join(", ").dimmed()
+                    );
+                }
+            }
+        }
+        Commands::Review { json } => {
+            let decisions = workflow::read_all()?;
+            if json {
+                println!("{}", serde_json::to_string_pretty(&decisions)?);
+            } else {
+                print!("{}", workflow::review_report(&decisions));
             }
         }
         Commands::Mcp => {

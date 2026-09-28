@@ -208,6 +208,44 @@ pub fn needs_review(extra: &serde_json::Map<String, serde_json::Value>, command:
     ids
 }
 
+/// Primary search-intent Choice, shared by the page fan-out (`engine.rs`) and
+/// the standalone GSC query classifier (`Commands::Intent`, auspia.ai use
+/// case 1) so both ask Jev the exact same question.
+pub fn intent_question() -> serde_json::Value {
+    serde_json::json!({
+        "intent": {
+            "type": "choice",
+            "instructions": "Select the primary search intent.",
+            "criteria": {
+                "informational": "How-to, tutorial, explanation, documentation, research",
+                "commercial": "Product reviews, pricing comparisons, buying evaluation",
+                "transactional": "Immediate download, sign-up, purchase, command execution",
+                "navigational": "Specific brand, GitHub repo, or homepage search",
+                "insufficient_context": "Supplied evidence is too thin to choose safely"
+            }
+        }
+    })
+}
+
+/// Keep / update / merge / delete content decision (auspia.ai use case 2).
+/// `merge_hint` is the cannibalization pair's stem when this page collides
+/// with another on the same keyword, empty otherwise -- code-owned evidence,
+/// not asked, since we already computed it deterministically.
+pub fn content_decision_question() -> serde_json::Value {
+    serde_json::json!({
+        "content_decision": {
+            "type": "choice",
+            "instructions": "Given `page`, `checks`, and `cannibalization` (if present), what should happen to this page?",
+            "criteria": {
+                "keep": "Serves a distinct, currently useful search intent as-is",
+                "update": "Useful topic but thin, stale, or gapped -- worth improving, not replacing",
+                "merge": "Substantially overlaps another page's intent (see `cannibalization`) -- fold into the stronger page",
+                "delete": "No remaining search intent or business value -- safe to remove"
+            }
+        }
+    })
+}
+
 /// Dedicated injection / instruction-steer Noul. Runs as its own question so
 /// a positive can gate the rest of the suite (skill jaggedness #6).
 pub fn injection_question() -> serde_json::Value {

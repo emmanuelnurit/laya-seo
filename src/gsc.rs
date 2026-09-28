@@ -233,6 +233,49 @@ pub fn gap(site: &str, limit: usize) -> Result<Vec<GapRow>> {
     Ok(rows)
 }
 
+/// Parse a Search Console "Queries.csv" export (UI download, no OAuth
+/// needed): header `Top queries,Clicks,Impressions,CTR,Position` or the raw
+/// API's `query,clicks,impressions,ctr,position` -- matched case-insensitive
+/// by substring so either header row works. Missing numeric columns default
+/// to 0.0 rather than failing the row.
+pub fn parse_csv_export(raw: &str) -> Result<Vec<GscRow>> {
+    let mut lines = raw.lines();
+    let header = lines.next().context("empty CSV")?;
+    let cols: Vec<String> = header.split(',').map(|c| c.trim().to_ascii_lowercase()).collect();
+    let find = |needle: &str| cols.iter().position(|c| c.contains(needle));
+    let q_i = find("quer").context("CSV must have a query column (e.g. \"Top queries\")")?;
+    let clicks_i = find("click");
+    let impr_i = find("impression");
+    let ctr_i = find("ctr");
+    let pos_i = find("position");
+    let num = |fields: &[&str], idx: Option<usize>| -> f64 {
+        idx.and_then(|i| fields.get(i))
+            .map(|s| s.trim().trim_end_matches('%'))
+            .and_then(|s| s.parse::<f64>().ok())
+            .unwrap_or(0.0)
+    };
+    let mut out = Vec::new();
+    for line in lines {
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
+        let fields: Vec<&str> = line.split(',').map(str::trim).collect();
+        let Some(query) = fields.get(q_i).map(|s| s.to_string()) else { continue };
+        if query.is_empty() {
+            continue;
+        }
+        out.push(GscRow {
+            query,
+            clicks: num(&fields, clicks_i),
+            impressions: num(&fields, impr_i),
+            ctr: num(&fields, ctr_i),
+            position: num(&fields, pos_i),
+        });
+    }
+    Ok(out)
+}
+
 pub(crate) fn urlencoding(s: &str) -> String {
     let mut out = String::new();
     for b in s.bytes() {

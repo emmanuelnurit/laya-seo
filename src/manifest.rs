@@ -541,7 +541,7 @@ pub fn completeness_llms(rep: &crate::llms::LlmsReport) -> Completeness {
 }
 
 /// Directory holding the local DB; the eval log lives beside it.
-fn jev_home_dir() -> Option<std::path::PathBuf> {
+pub(crate) fn jev_home_dir() -> Option<std::path::PathBuf> {
     if let Ok(db) = std::env::var("JEV_SEO_DB") {
         return std::path::Path::new(&db)
             .parent()

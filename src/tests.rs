@@ -2092,4 +2092,91 @@ Sitemap: https://example.com/sitemap.xml
         assert_eq!(state["page"]["text"], "body copy");
         assert_eq!(state["query"], "q");
     }
+
+    // -- MYO-536: calibration, workflow ledger, GSC CSV import --------------
+
+    #[test]
+    fn test_calibrate_recovers_a_clean_separation() {
+        use crate::calibrate::{calibrate, parse_csv};
+        // Perfectly separable: every correct example scores >= 0.6, every
+        // incorrect one scores < 0.6. Calibration must find that boundary
+        // even though the skill-default 0.80 would wrongly Drop 0.6-0.79.
+        let csv = "id,confidence,correct\n\
+                    a,0.95,true\nb,0.85,true\nc,0.65,true\nd,0.60,true\n\
+                    e,0.55,false\nf,0.40,false\ng,0.20,false\nh,0.05,false\n";
+        let examples = parse_csv(csv).unwrap();
+        assert_eq!(examples.len(), 8);
+        let result = calibrate(&examples, 0.80).unwrap();
+        assert!(
+            (0.60..0.65).contains(&result.recommended_threshold),
+            "expected ~0.60, got {}",
+            result.recommended_threshold
+        );
+        assert_eq!(result.f1_at_threshold, 1.0);
+        // The default 0.80 misses two correct examples (c, d) as false negatives.
+        assert!(result.f1_at_default < 1.0);
+        assert!(result.misclassified_at_threshold.is_empty());
+    }
+
+    #[test]
+    fn test_calibrate_rejects_missing_columns() {
+        use crate::calibrate::parse_csv;
+        assert!(parse_csv("id,confidence\na,0.9\n").is_err());
+        assert!(parse_csv("").is_err());
+    }
+
+    #[test]
+    fn test_workflow_stage_and_review_report() {
+        let _env = env_lock();
+        use crate::policy::Verdict;
+        use crate::workflow::{make_decision, read_all, review_report, stage};
+        use serde_json::json;
+        let dir = tempfile::tempdir().unwrap();
+        std::env::set_var("JEV_SEO_DB", dir.path().join("wf.db").to_str().unwrap());
+
+        let d1 = make_decision("intent-classify", "how to fix pagination", "informational", 0.9, Verdict::Act, json!({}));
+        let d2 = make_decision("content-decide", "old-post.md", "merge", 0.3, Verdict::Drop, json!({}));
+        stage(&d1).unwrap();
+        stage(&d2).unwrap();
+
+        let all = read_all().unwrap();
+        std::env::remove_var("JEV_SEO_DB");
+        assert_eq!(all.len(), 2);
+        let report = review_report(&all);
+        // Drop-verdict rows must sort before Act-verdict rows: that's the
+        // point of the review report, low-confidence decisions surface first.
+        let drop_pos = report.find("old-post.md").unwrap();
+        let act_pos = report.find("how to fix pagination").unwrap();
+        assert!(drop_pos < act_pos, "Drop row must sort above Act row:\n{report}");
+    }
+
+    #[test]
+    fn test_review_report_empty_ledger() {
+        use crate::workflow::review_report;
+        assert!(review_report(&[]).contains("Aucune décision"));
+    }
+
+    #[test]
+    fn test_gsc_parse_csv_export_matches_ui_header() {
+        use crate::gsc::parse_csv_export;
+        let csv = "Top queries,Clicks,Impressions,CTR,Position\n\
+                    \"buy running shoes\",12,340,3.5%,4.2\n\
+                    \"how to fix a flat tire\",3,900,0.3%,18.7\n";
+        let rows = parse_csv_export(csv).unwrap();
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].query, "\"buy running shoes\"");
+        assert_eq!(rows[0].clicks, 12.0);
+        assert_eq!(rows[0].impressions, 340.0);
+        assert_eq!(rows[1].position, 18.7);
+    }
+
+    #[test]
+    fn test_content_decision_question_has_four_options() {
+        use crate::policy::content_decision_question;
+        let q = content_decision_question();
+        let criteria = q["content_decision"]["criteria"].as_object().unwrap();
+        for k in ["keep", "update", "merge", "delete"] {
+            assert!(criteria.contains_key(k), "missing option {k}");
+        }
+    }
 }

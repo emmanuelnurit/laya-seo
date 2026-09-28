@@ -191,18 +191,8 @@ impl JevClient {
     ) -> Result<AnalysisResult> {
         let state = truncate_state(prefilter_state(state));
         let input_chars = state.to_string().len();
-        let mut questions = json!({
-                "intent": {
-                    "type": "choice",
-                    "instructions": "Select the primary search intent.",
-                    "criteria": {
-                        "informational": "How-to, tutorial, explanation, documentation, research",
-                        "commercial": "Product reviews, pricing comparisons, buying evaluation",
-                        "transactional": "Immediate download, sign-up, purchase, command execution",
-                        "navigational": "Specific brand, GitHub repo, or homepage search",
-                        "insufficient_context": "Supplied evidence is too thin to choose safely"
-                    }
-                },
+        let mut questions = crate::policy::intent_question();
+        merge_json_objects(&mut questions, &json!({
                 "geo_score": {
                     "type": "score",
                     "instructions": "Rate citation likelihood for generative search engines (Perplexity, SearchGPT, Gemini).",
@@ -234,7 +224,7 @@ impl JevClient {
                         "insufficient_context": "Too little content to judge a weakness"
                     }
                 }
-        });
+        }));
         if let Some(map) = questions.as_object_mut() {
             if let Some(extra) = extra_questions.as_object() {
                 for (k, v) in extra {
@@ -444,6 +434,68 @@ impl JevClient {
         self.fanout_eval_with(state, extras)
     }
 
+    /// Standalone search-intent Choice over a bare query string (auspia.ai use
+    /// case 1: GSC query classification). No page content to screen, so this
+    /// skips `injection_preflight` -- a search query alone carries no
+    /// attacker-controlled prose surface for the classifier to misread.
+    /// Returns (choice, confidence, raw answer object).
+    pub fn classify_intent(&self, query: &str) -> Result<(String, f64, serde_json::Value)> {
+        let state = json!({ "query": query });
+        let payload = json!({
+            "model": self.model,
+            "state": state,
+            "questions": crate::policy::intent_question()
+        });
+        let (resp, est) = self.post(payload)?;
+        let body: serde_json::Value = resp.into_json()?;
+        record_usage(&body, est);
+        let answer = body
+            .pointer("/answers/intent")
+            .cloned()
+            .context("Jev response missing answers.intent")?;
+        let choice = answer["choice"].as_str().context("missing intent choice")?.to_string();
+        let confidence = answer["confidence"].as_f64().context("missing intent confidence")?;
+        Ok((choice, confidence, answer))
+    }
+
+    /// Keep/update/merge/delete Choice for one page (auspia.ai use case 2).
+    /// `cannibalization` is the colliding page's path when this one shares a
+    /// keyword stem with another audited page, `None` otherwise -- computed
+    /// deterministically by `audit::cannibalization_pairs`, not guessed by Jev.
+    /// Runs the same injection preflight as `judge_page` since `page.text`
+    /// here is real crawled/authored copy.
+    pub fn judge_content_decision(
+        &self,
+        mut state: serde_json::Value,
+        cannibalization: Option<&str>,
+    ) -> Result<(String, f64, serde_json::Value)> {
+        if self.injection_preflight(&state)? {
+            return Ok((
+                "keep".to_string(),
+                0.0,
+                json!({"blocked": true, "reason": "injection_risk"}),
+            ));
+        }
+        if let (Some(obj), Some(target)) = (state.as_object_mut(), cannibalization) {
+            obj.insert("cannibalization".into(), serde_json::Value::String(target.to_string()));
+        }
+        let payload = json!({
+            "model": self.model,
+            "state": truncate_state(prefilter_state(state)),
+            "questions": crate::policy::content_decision_question()
+        });
+        let (resp, est) = self.post(payload)?;
+        let body: serde_json::Value = resp.into_json()?;
+        record_usage(&body, est);
+        let answer = body
+            .pointer("/answers/content_decision")
+            .cloned()
+            .context("Jev response missing answers.content_decision")?;
+        let choice = answer["choice"].as_str().context("missing content_decision choice")?.to_string();
+        let confidence = answer["confidence"].as_f64().context("missing content_decision confidence")?;
+        Ok((choice, confidence, answer))
+    }
+
     /// Site/homepage judgment: base + GEO dims + value prop / entity / model.
     pub fn judge_site(&self, state: serde_json::Value) -> Result<AnalysisResult> {
         if self.injection_preflight(&state)? {
@@ -472,6 +524,15 @@ impl JevClient {
             }
         }
         self.fanout_eval_with(state, extras)
+    }
+}
+
+/// Insert every key of `src` into `dst` in place. `dst` must be an object.
+fn merge_json_objects(dst: &mut serde_json::Value, src: &serde_json::Value) {
+    if let (Some(d), Some(s)) = (dst.as_object_mut(), src.as_object()) {
+        for (k, v) in s {
+            d.insert(k.clone(), v.clone());
+        }
     }
 }
 

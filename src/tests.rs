@@ -1005,7 +1005,7 @@ Sitemap: https://example.com/sitemap.xml
         use crate::policy::injection_blocked;
         use serde_json::json;
         let mut yes = serde_json::Map::new();
-        yes.insert("injection_risk".into(), json!({"type":"noul","value":0.9,"noul":0.9}));
+        yes.insert("injection_risk".into(), json!({"type":"noul","value":0.97,"noul":0.97}));
         assert!(injection_blocked(&yes));
         let mut no = serde_json::Map::new();
         no.insert("injection_risk".into(), json!({"type":"noul","value":0.1,"noul":0.1}));

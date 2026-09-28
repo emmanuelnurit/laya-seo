@@ -363,7 +363,7 @@ impl JevClient {
             .or_else(|| body.pointer("/answers/injection_risk/probability"))
             .and_then(|v| v.as_f64())
             .unwrap_or(0.0);
-        Ok(p >= 0.70)
+        Ok(p >= crate::policy::INJECTION_BLOCK)
     }
 
     /// Judge one page (or snippet) with the full speculative suite in a single

@@ -246,6 +246,18 @@ pub fn content_decision_question() -> serde_json::Value {
     })
 }
 
+/// Block bar for the dedicated injection Noul. NOT the Laya-doc skill default
+/// (0.70) — raised to 0.95 by a real calibration pilot (MYO-536,
+/// `calibration/pilot-2026-09-28/`): at 0.70, 17/18 real README sections
+/// (genuine MyOrg product docs about AI/agent tooling, zero actual injection
+/// attempts) tripped the block, precision 0.32. At 0.95, false positives drop
+/// to 4/18 while all 6 constructed adversarial probes (score >= 0.985) still
+/// block. Still provisional: calibrated on 24 examples from one homogeneous
+/// source, not the hundreds of real MyOrg decisions the issue asks for --
+/// recalibrate with `jev-seo calibrate` once real site/GSC content is
+/// accessible, see that pilot's README for the exact blocker.
+pub const INJECTION_BLOCK: f64 = 0.95;
+
 /// Dedicated injection / instruction-steer Noul. Runs as its own question so
 /// a positive can gate the rest of the suite (skill jaggedness #6).
 pub fn injection_question() -> serde_json::Value {
@@ -267,7 +279,7 @@ pub fn injection_blocked(extra: &serde_json::Map<String, serde_json::Value>) -> 
         .get("injection_risk")
         .and_then(|a| a.get("noul").or_else(|| a.get("probability")))
         .and_then(|p| p.as_f64())
-        .map(|p| p >= 0.70)
+        .map(|p| p >= INJECTION_BLOCK)
         .unwrap_or(false)
 }
 

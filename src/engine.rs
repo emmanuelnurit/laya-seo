@@ -349,10 +349,20 @@ impl JevClient {
 
     /// Dedicated injection pre-screen (skill jaggedness #6): one Noul before the
     /// full suite. True = block; do not trust further semantic answers on this state.
+    ///
+    /// Scans `injection_surface(state)`, not the raw state: callers attach
+    /// code-generated fields (e.g. `checks`, our own rule-engine messages)
+    /// alongside `page`, and those messages talk *about* AI/citation/blocking
+    /// ("Optimal AI citation block: 134-167 words") in a way that reads as a
+    /// steering instruction to the classifier despite being entirely our own
+    /// trusted text. Calibration on real MyOrg fixtures (MYO-536) found this
+    /// pushed `injection_risk` to ~0.96 on completely benign pages, 8/8
+    /// reproducible, starving every downstream score. Only `page.*` can carry
+    /// attacker-controlled copy, so only `page.*` is worth screening.
     pub fn injection_preflight(&self, state: &serde_json::Value) -> Result<bool> {
         let payload = json!({
             "model": self.model,
-            "state": truncate_state(prefilter_state(state.clone())),
+            "state": truncate_state(prefilter_state(injection_surface(state))),
             "questions": crate::policy::injection_question()
         });
         let (resp, est) = self.post(payload)?;
@@ -463,6 +473,15 @@ impl JevClient {
         }
         self.fanout_eval_with(state, extras)
     }
+}
+
+/// Narrow a full Jev state down to the only part an attacker could actually
+/// have written: `page.*` (crawled or user-supplied copy). Sibling fields
+/// added by callers (`checks`, `query`, composite scores, ...) are code- or
+/// operator-generated and must never reach the injection classifier -- see
+/// `injection_preflight`.
+pub(crate) fn injection_surface(state: &serde_json::Value) -> serde_json::Value {
+    json!({ "page": state.get("page").cloned().unwrap_or(serde_json::Value::Null) })
 }
 
 /// Base URL of a self-hosted laya-bridge from `LAYA_LOCAL_URL`

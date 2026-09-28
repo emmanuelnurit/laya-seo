@@ -1014,6 +1014,26 @@ Sitemap: https://example.com/sitemap.xml
     }
 
     #[test]
+    fn test_injection_surface_excludes_own_diagnostics() {
+        // Regression for MYO-536: the injection classifier must never see
+        // `checks` (our own rule-engine messages). One reproduced live
+        // 8/8: the check text "Optimal AI citation block: 134-167 words"
+        // pushed injection_risk to ~0.96 on fully benign fixtures, because
+        // it talks about AI/citation/blocking despite being entirely
+        // code-generated, not attacker-controlled page copy.
+        use crate::engine::injection_surface;
+        use serde_json::json;
+        let state = json!({
+            "query": "gate fixture",
+            "page": {"title": "T", "description": "D", "text": "Body copy.", "word_count": 2, "opening": null},
+            "checks": [{"name": "GEO Citation Density", "passed": false, "message": "Optimal AI citation block: 134-167 words"}]
+        });
+        let surface = injection_surface(&state);
+        assert!(surface.get("checks").is_none(), "checks must not reach the injection classifier");
+        assert_eq!(surface["page"]["text"], "Body copy.");
+    }
+
+    #[test]
     fn test_route_for_intent_exists() {
         use crate::policy::route_for_intent;
         assert_eq!(route_for_intent("navigational"), "rank");

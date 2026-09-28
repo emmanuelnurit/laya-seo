@@ -256,6 +256,17 @@ pub fn content_decision_question() -> serde_json::Value {
 /// source, not the hundreds of real MyOrg decisions the issue asks for --
 /// recalibrate with `jev-seo calibrate` once real site/GSC content is
 /// accessible, see that pilot's README for the exact blocker.
+///
+/// Deliberately below `jev-seo calibrate`'s own F1-optimal pick on that same
+/// pilot (~0.985, the lowest observed adversarial score -- zero false
+/// positives/negatives on these 24 rows). Not used as-is: pinning the bar to
+/// the single lowest adversarial sample in a 24-example pilot is a threshold
+/// fit to one data point, and for a security gate a false negative (real
+/// injection let through) is worse than a false positive (benign page
+/// over-flagged, human reviews it). 0.95 buys margin below the observed
+/// adversarial floor at the cost of pilot-measured precision -- do not
+/// "correct" this back to match `calibrate`'s raw output without re-deriving
+/// that margin from the full-scale calibration.
 pub const INJECTION_BLOCK: f64 = 0.95;
 
 /// Dedicated injection / instruction-steer Noul. Runs as its own question so

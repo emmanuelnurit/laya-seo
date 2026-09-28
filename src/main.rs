@@ -1988,7 +1988,10 @@ fn main() -> Result<()> {
             // (no OAuth needed -- the common path when this agent has no
             // Search Console credentials wired up yet).
             let rows: Vec<gsc::GscRow> = match (csv, site) {
-                (Some(path), _) => {
+                (Some(path), site) => {
+                    if site.is_some() {
+                        eprintln!("{}", "Note: --csv and --site both given; --csv wins, --site is ignored.".yellow());
+                    }
                     let raw = crate::paths::read_user_file(&path, &["csv"])?;
                     gsc::parse_csv_export(&raw)?
                 }
@@ -2031,7 +2034,17 @@ fn main() -> Result<()> {
                             );
                         }
                     }
-                    Err(e) => eprintln!("{}", format!("Warning: intent classify failed for \"{}\" ({e:#})", row.query).yellow()),
+                    Err(e) => {
+                        // Budget exhaustion (engine::post's reserve_jev_tokens check) is
+                        // permanent for the rest of this run -- every remaining row would
+                        // otherwise retry and fail individually instead of stopping once.
+                        let msg = format!("{e:#}");
+                        if msg.contains("budget cap reached") {
+                            eprintln!("{}", format!("Warning: {msg}, stopping intent batch early.").yellow());
+                            break;
+                        }
+                        eprintln!("{}", format!("Warning: intent classify failed for \"{}\" ({msg})", row.query).yellow());
+                    }
                 }
             }
             if json {
@@ -2097,7 +2110,14 @@ fn main() -> Result<()> {
                             );
                         }
                     }
-                    Err(e) => eprintln!("{}", format!("Warning: content decision failed for {} ({e:#})", report.file_path).yellow()),
+                    Err(e) => {
+                        let msg = format!("{e:#}");
+                        if msg.contains("budget cap reached") {
+                            eprintln!("{}", format!("Warning: {msg}, stopping decide batch early.").yellow());
+                            break;
+                        }
+                        eprintln!("{}", format!("Warning: content decision failed for {} ({msg})", report.file_path).yellow());
+                    }
                 }
             }
             if json {

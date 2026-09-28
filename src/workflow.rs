@@ -76,13 +76,19 @@ fn ledger_path() -> Option<std::path::PathBuf> {
 
 /// "Exécuter": append-only stage, best-effort like `manifest::append_eval_log`
 /// -- a ledger write failure must never fail the surrounding audit/link/geo
-/// command that produced the decision.
+/// command that produced the decision. Rotates past 5 MB, same cap and same
+/// reasoning as `manifest::append_eval_log`: this ledger carries raw Jev
+/// reasoning blobs per decision, so it grows the same way the eval log does.
 pub fn stage(decision: &StagedDecision) -> Result<()> {
+    const CAP_BYTES: u64 = 5 * 1024 * 1024;
     let Some(path) = ledger_path() else {
         return Ok(());
     };
     if let Some(dir) = path.parent() {
         std::fs::create_dir_all(dir).ok();
+    }
+    if path.metadata().map(|m| m.len() > CAP_BYTES).unwrap_or(false) {
+        let _ = std::fs::remove_file(&path);
     }
     use std::io::Write;
     let mut opts = std::fs::OpenOptions::new();

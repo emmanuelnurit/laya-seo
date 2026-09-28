@@ -2126,6 +2126,20 @@ Sitemap: https://example.com/sitemap.xml
     }
 
     #[test]
+    fn test_calibrate_parse_csv_handles_comma_in_quoted_id() {
+        // MYO-536 follow-up: an `id` field quoting a real subject (a file
+        // path, a query) that contains a comma must not shift `confidence`/
+        // `correct` into the wrong column.
+        use crate::calibrate::parse_csv;
+        let csv = "id,confidence,correct\n\"docs/a, b.md\",0.9,true\n";
+        let examples = parse_csv(csv).unwrap();
+        assert_eq!(examples.len(), 1);
+        assert_eq!(examples[0].id, "docs/a, b.md");
+        assert_eq!(examples[0].confidence, 0.9);
+        assert!(examples[0].correct);
+    }
+
+    #[test]
     fn test_workflow_stage_and_review_report() {
         let _env = env_lock();
         use crate::policy::Verdict;
@@ -2164,10 +2178,24 @@ Sitemap: https://example.com/sitemap.xml
                     \"how to fix a flat tire\",3,900,0.3%,18.7\n";
         let rows = parse_csv_export(csv).unwrap();
         assert_eq!(rows.len(), 2);
-        assert_eq!(rows[0].query, "\"buy running shoes\"");
+        assert_eq!(rows[0].query, "buy running shoes");
         assert_eq!(rows[0].clicks, 12.0);
         assert_eq!(rows[0].impressions, 340.0);
         assert_eq!(rows[1].position, 18.7);
+    }
+
+    #[test]
+    fn test_gsc_parse_csv_export_handles_comma_in_quoted_query() {
+        // MYO-536 follow-up: a naive split(',') shifts every column over on
+        // a query like "shoes, running" -- the quoted comma must not split.
+        use crate::gsc::parse_csv_export;
+        let csv = "Top queries,Clicks,Impressions,CTR,Position\n\
+                    \"shoes, running\",12,340,3.5%,4.2\n";
+        let rows = parse_csv_export(csv).unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].query, "shoes, running");
+        assert_eq!(rows[0].clicks, 12.0);
+        assert_eq!(rows[0].position, 4.2);
     }
 
     #[test]

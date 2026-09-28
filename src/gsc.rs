@@ -233,6 +233,34 @@ pub fn gap(site: &str, limit: usize) -> Result<Vec<GapRow>> {
     Ok(rows)
 }
 
+/// Minimal RFC4180-ish CSV field split: honors double-quoted fields (a
+/// comma inside quotes does not split, `""` is an escaped literal quote).
+/// A plain `split(',')` breaks silently on any Search Console query or
+/// calibration id that itself contains a comma -- fields just shift over
+/// with no parse error.
+pub(crate) fn split_csv_line(line: &str) -> Vec<String> {
+    let mut fields = Vec::new();
+    let mut field = String::new();
+    let mut in_quotes = false;
+    let mut chars = line.chars().peekable();
+    while let Some(c) = chars.next() {
+        match c {
+            '"' if in_quotes && chars.peek() == Some(&'"') => {
+                field.push('"');
+                chars.next();
+            }
+            '"' => in_quotes = !in_quotes,
+            ',' if !in_quotes => {
+                fields.push(field.trim().to_string());
+                field.clear();
+            }
+            _ => field.push(c),
+        }
+    }
+    fields.push(field.trim().to_string());
+    fields
+}
+
 /// Parse a Search Console "Queries.csv" export (UI download, no OAuth
 /// needed): header `Top queries,Clicks,Impressions,CTR,Position` or the raw
 /// API's `query,clicks,impressions,ctr,position` -- matched case-insensitive
@@ -241,16 +269,16 @@ pub fn gap(site: &str, limit: usize) -> Result<Vec<GapRow>> {
 pub fn parse_csv_export(raw: &str) -> Result<Vec<GscRow>> {
     let mut lines = raw.lines();
     let header = lines.next().context("empty CSV")?;
-    let cols: Vec<String> = header.split(',').map(|c| c.trim().to_ascii_lowercase()).collect();
+    let cols: Vec<String> = split_csv_line(header).into_iter().map(|c| c.to_ascii_lowercase()).collect();
     let find = |needle: &str| cols.iter().position(|c| c.contains(needle));
     let q_i = find("quer").context("CSV must have a query column (e.g. \"Top queries\")")?;
     let clicks_i = find("click");
     let impr_i = find("impression");
     let ctr_i = find("ctr");
     let pos_i = find("position");
-    let num = |fields: &[&str], idx: Option<usize>| -> f64 {
+    let num = |fields: &[String], idx: Option<usize>| -> f64 {
         idx.and_then(|i| fields.get(i))
-            .map(|s| s.trim().trim_end_matches('%'))
+            .map(|s| s.trim_end_matches('%'))
             .and_then(|s| s.parse::<f64>().ok())
             .unwrap_or(0.0)
     };
@@ -260,8 +288,8 @@ pub fn parse_csv_export(raw: &str) -> Result<Vec<GscRow>> {
         if line.is_empty() {
             continue;
         }
-        let fields: Vec<&str> = line.split(',').map(str::trim).collect();
-        let Some(query) = fields.get(q_i).map(|s| s.to_string()) else { continue };
+        let fields = split_csv_line(line);
+        let Some(query) = fields.get(q_i).cloned() else { continue };
         if query.is_empty() {
             continue;
         }

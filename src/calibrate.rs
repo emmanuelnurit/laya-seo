@@ -48,7 +48,7 @@ pub struct CalibrationResult {
 pub fn parse_csv(raw: &str) -> Result<Vec<LabeledExample>> {
     let mut lines = raw.lines();
     let header = lines.next().context("empty CSV")?;
-    let cols: Vec<&str> = header.split(',').map(str::trim).collect();
+    let cols = crate::gsc::split_csv_line(header);
     let idx = |name: &str| cols.iter().position(|c| c.eq_ignore_ascii_case(name));
     let id_i = idx("id");
     let conf_i = idx("confidence").context("CSV must have a `confidence` column")?;
@@ -61,7 +61,7 @@ pub fn parse_csv(raw: &str) -> Result<Vec<LabeledExample>> {
         if line.is_empty() {
             continue;
         }
-        let fields: Vec<&str> = line.split(',').map(str::trim).collect();
+        let fields = crate::gsc::split_csv_line(line);
         let confidence: f64 = fields
             .get(conf_i)
             .context("missing confidence field")?

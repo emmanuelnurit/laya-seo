@@ -5,6 +5,19 @@ All notable changes to `jev-seo` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — MyOrg fork (laya-seo)
+
+### Added
+- `laya-local` Jev backend: `laya-bridge` (Python, FastAPI over Laya) as a free, self-hosted alternative to the paid TypeSafe API, checkpoint pinned to `multilingual` (MYO-535).
+- auspia.ai 4-step product workflow (Generate & Reason → Decide → Execute → Review), shared by all four priority use cases via `src/workflow.rs`: `jev-seo intent` (search-intent classification on GSC queries), `jev-seo decide` (keep/update/merge/delete content decisions), and existing `link`/`geo` now staged into the same reviewable ledger (MYO-536).
+- `jev-seo calibrate`: F1-optimal confidence-threshold calibration on a labeled CSV, replacing the Laya-doc default per auspia.ai's explicit recommendation (MYO-536).
+- `jev-seo review`: markdown/JSON report of every staged decision, grouped by verdict.
+- `scripts/ci-gate.sh`: `cargo test` + `laya-bridge` pytest + `audit` gate in one script (MYO-536).
+
+### Fixed
+- `injection_preflight` false-positive: was scanning the full Jev state including code-generated `checks` messages, which read as AI-steering instructions to the classifier ("Optimal AI citation block: 134-167 words" → `injection_risk` ≈0.96 on fully benign content, 8/8 reproducible). `engine::injection_surface` now narrows the scan to `page.*` only.
+- `policy::INJECTION_BLOCK` raised from the uncalibrated 0.70 default to 0.95 after a real calibration pilot (`calibration/pilot-2026-09-28/`) found 0.70 false-positived on ~94% of this repo's own real documentation.
+
 ## [0.1.2] - 2026-09-26
 
 ### Added
